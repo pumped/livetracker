@@ -6,7 +6,7 @@ function Tracker() {
   var that = this;
   this.cleanTimer = setInterval(function(){
     that.clean();
-  },10000);
+  },2000);
 }
 
 Tracker.prototype.getData = function () {
@@ -50,7 +50,7 @@ Tracker.prototype.clean = function() {
   var d = new Date();
   var removeDate = d.getTime();
   //removeDate -= 10*60*1000;
-  removeDate -= 60*1000;
+  removeDate -= 45*1000;
   for (var i in this.live) {
     if (this.live[i].date < removeDate) {
       //console.log("removed " + i);
