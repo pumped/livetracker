@@ -49,7 +49,7 @@ Tracker.prototype.clean = function() {
   var d = new Date();
   var removeDate = d.getTime();
   //removeDate -= 10*60*1000;
-  removeDate -= 4*1000;
+  removeDate -= 45*1000;
   for (var i in this.live) {
     if (this.live[i].latest < removeDate) {
       //console.log("removed " + i);
