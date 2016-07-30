@@ -90,8 +90,8 @@ function timeOnSite(data) {
 }
 
 function lastHitStats(data) {
-  var binCount = 10;
-  var binPeriod = 10*1000;
+  var binCount = 30;
+  var binPeriod = 60*1000;
   var maxTime = binCount * binPeriod;
   var bins = Array.apply(null, Array(binCount)).map(Number.prototype.valueOf,0);;
   

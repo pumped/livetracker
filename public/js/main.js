@@ -197,7 +197,7 @@ function setupRequestGraph() {
             gridLineColor: 'transparent'
         },
         tooltip: {
-            headerFormat: '<span style="font-size:10px">{point.key}0 Seconds Ago</span><table>',
+            headerFormat: '<span style="font-size:10px">{point.key}0 Minutes Ago</span><table>',
             pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
                 '<td style="padding:0"><b>{point.y:.0f}</b></td></tr>',
             footerFormat: '</table>',
@@ -206,13 +206,18 @@ function setupRequestGraph() {
         },
         plotOptions: {
             column: {
-                pointPadding: 0.2,
+                pointPadding: 0.1,
                 borderWidth: 0
+            },
+            series: {
+                pointPadding: 0.1,
+                borderWidth: 0,
+                groupPadding: 0
             }
         },
         series: [{
             name: 'Requests',
-            data: [],
+            data: [1,1,1,1,1,1,1,1,1,1,1,1,1,1],
             color: "#3c87ff"
         }]
     });

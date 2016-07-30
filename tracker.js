@@ -2,11 +2,20 @@ var farmhash = require('farmhash');
 
 function Tracker() {
   this.live = {};
+  this.liveFile = "live.json";
   
   var that = this;
   this.cleanTimer = setInterval(function(){
     that.clean();
   },2000);
+  
+  var fs = require('fs');
+  fs.readFile(this.liveFile, 'utf8', function (err, data) {
+    if (err) {
+      return;
+    }
+    this.live = JSON.parse(data);
+  });
 }
 
 Tracker.prototype.getData = function () {
@@ -56,6 +65,14 @@ Tracker.prototype.clean = function() {
       delete this.live[i];
     }
   }
+  
+  var fs = require('fs');
+  var str = JSON.stringify(this.live);
+  fs.writeFile(this.liveFile, str, function(err) {
+      if(err) {
+          return console.log(err);
+      }
+  }); 
 }
 
 module.exports = Tracker;
