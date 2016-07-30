@@ -31,14 +31,16 @@ app.get('/live/data', function (req, res) {
     } else if (data[i].type == 3) {
       tablet++;
     }
-    
   }
+  
+  var tos = timeOnSite(data);
   
   var resp = {
     "clients":clients,
     "computer":computer,
     "mobile":mobile,
-    "tablet":0
+    "tablet":0,
+    "timeOnSite":tos
   }  
   
   var response = JSON.stringify(resp);
@@ -46,6 +48,43 @@ app.get('/live/data', function (req, res) {
   res.status(200).send(response);
   
 });
+
+function timeOnSite(data) {
+  var clients = Object.keys(data).length;
+  
+  var d = new Date;
+  var time = d.getTime();
+  
+  var timeSum = 0;  
+  var longest;
+  var shortest;
+  for (var i in data) {
+    var sessionsTime = time - data[i].date;
+    
+    //average
+    timeSum += sessionsTime;
+    
+    //setup longest
+    if (!longest || sessionsTime < (time-longest.date)) {
+      longest = data[i];
+    }
+    
+    if (!shortest || sessionsTime > (time-shortest.date)) {
+      shortest = data[i];
+    }
+  }
+  
+  var averageTime = timeSum / clients;
+  
+  var timeOnSite = {
+    "average": averageTime,
+    "total": timeSum,
+    "longest": longest,
+    "shortest": shortest    
+  }
+  
+  return timeOnSite;
+}
 
 app.get('/live/report', function (req, res) {
   

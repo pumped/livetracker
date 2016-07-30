@@ -13,7 +13,6 @@ function getData() {
 }
 
 function updateData(data) {
-  console.log(data);
   $("#liveUsers").html(data.clients);
   userChart.series[0].setData([data.mobile]);
   userChart.series[1].setData([data.computer]);
@@ -24,7 +23,48 @@ function updateData(data) {
   
   userChart.redraw();
   
-  console.log(userChart);
+  if (data.timeOnSite.average) {
+    var d = new Date();
+    var time = d.getTime();
+    
+    var tos = timeSince(data.timeOnSite.longest.date);
+    $('#longest .time').html(tos);
+    $('#longest .ip').html(data.timeOnSite.longest.ip);
+    
+    var tos = timeSince(data.timeOnSite.shortest.date);
+    $('#shortest .time').html(tos);
+    $('#shortest .ip').html(data.timeOnSite.shortest.ip);
+    
+    $('#mean .time').html(timeSince(time - data.timeOnSite.average));
+  }
+}
+
+function timeSince(date) {
+
+    var seconds = Math.floor((new Date() - date) / 1000);
+
+    var interval = Math.floor(seconds / 31536000);
+
+    if (interval > 1) {
+        return interval + " years";
+    }
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) {
+        return interval + " months";
+    }
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) {
+        return interval + " days";
+    }
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) {
+        return interval + " hours";
+    }
+    interval = Math.floor(seconds / 60);
+    if (interval > 1) {
+        return interval + " minutes";
+    }
+    return Math.floor(seconds) + " seconds";
 }
 
 var userChart;

@@ -17,13 +17,10 @@ Tracker.prototype.addRequest = function (info, req) {
   var ip = info.ip;
   var ua = req.headers['user-agent'];
   var cid = farmhash.fingerprint32(ip+ua);
+  var d = new Date();
+  var time = d.getTime();
   
   if (!this.live[cid]) {
-      
-    var d = new Date();
-    var time = d.getTime();
-    
-
     var ual = ua.toLowerCase();
     var type = 2;  
     if (ual.includes("mobile")) {
@@ -35,6 +32,7 @@ Tracker.prototype.addRequest = function (info, req) {
     var request = {
       "ip":ip,
       "date":time,
+      "latest":time,
       "type":type,
       "count":0
     }
@@ -42,6 +40,7 @@ Tracker.prototype.addRequest = function (info, req) {
     this.live[cid] = request;
   } else {
     this.live[cid].count++;
+    this.live[cid].latest = time;
   }
 };
 
@@ -50,9 +49,9 @@ Tracker.prototype.clean = function() {
   var d = new Date();
   var removeDate = d.getTime();
   //removeDate -= 10*60*1000;
-  removeDate -= 45*1000;
+  removeDate -= 4*1000;
   for (var i in this.live) {
-    if (this.live[i].date < removeDate) {
+    if (this.live[i].latest < removeDate) {
       //console.log("removed " + i);
       delete this.live[i];
     }

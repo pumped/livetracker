@@ -33,3 +33,16 @@ div#makeup {
     width: 300px;
     margin: auto;
 }
+
+#time {
+  width:300px;
+  margin:auto;
+}
+
+#time h3 {
+  font-size:1.3em;
+}
+
+#time {
+  font-size:0.8em;
+}
