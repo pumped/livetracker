@@ -14,7 +14,7 @@ function Tracker() {
     if (err) {
       return;
     }
-    this.live = JSON.parse(data);
+    that.live = JSON.parse(data);
   });
 }
 
