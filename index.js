@@ -65,11 +65,11 @@ function timeOnSite(data) {
     timeSum += sessionsTime;
     
     //setup longest
-    if (!longest || sessionsTime < (time-longest.date)) {
+    if (!longest || sessionsTime > (time-longest.date)) {
       longest = data[i];
     }
     
-    if (!shortest || sessionsTime > (time-shortest.date)) {
+    if (!shortest || sessionsTime < (time-shortest.date)) {
       shortest = data[i];
     }
   }
