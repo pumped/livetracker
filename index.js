@@ -10,8 +10,8 @@ var tracker = new Tracker();
 
 http.createServer(app).listen(8000);
 
-app.use(express.static('./public'));
-app.use('/live', express.static('public'));
+//app.use(express.static('./public'));
+app.use('/live/view', express.static('public'));
 
 // -- get data request -- //
 app.get('/live/data', function (req, res) {
