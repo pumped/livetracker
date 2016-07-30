@@ -5,9 +5,12 @@ function Tracker() {
   this.liveFile = "live.json";
   
   var that = this;
-  this.cleanTimer = setInterval(function(){
-    that.clean();
-  },2000);
+  setTimeout(function() {
+      that.cleanTimer = setInterval(function(){
+        that.clean();
+      },2000);
+  }, 30000);
+
   
   var fs = require('fs');
   fs.readFile(this.liveFile, 'utf8', function (err, data) {
