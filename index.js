@@ -49,8 +49,11 @@ app.get('/live/report', function (req, res) {
   //get ip
   var ip = "";
   ip = req.connection.remoteAddress
-  if (!ip) {
-    req.headers['x-forwarded-for'];
+  if (ip.includes("127.0.0.1")) {
+    nip = req.headers['x-forwarded-for'];
+    if (nip) {
+      ip = nip;
+    }    
   }
   
   console.log(ip);
