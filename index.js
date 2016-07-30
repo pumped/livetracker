@@ -59,8 +59,9 @@ app.get('/live/report', function (req, res) {
   console.log(ip);
   
   tracker.addRequest({"ip":ip}, req);
+  var rid = Math.random();
   
-  res.status(200).send("");  
+  res.status(200).send(rid);  
 });
 
 
