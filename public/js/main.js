@@ -18,9 +18,12 @@ function updateData(data) {
   userChart.series[0].setData([data.mobile]);
   userChart.series[1].setData([data.computer]);
   userChart.series[2].setData([data.tablet]);
+  
   var max = data.mobile + data.computer + data.tablet;
-  userChart.yAxis[0].setExtremes(0,max);
+  //userChart.xAxis[0].setExtremes(0,max);
+  
   userChart.redraw();
+  
   console.log(userChart);
 }
 
@@ -49,7 +52,8 @@ function setupChart() {
                 enabled: false
             },
             minorTickLength: 0,
-            tickLength: 0
+            tickLength: 0,
+            ordinal: false
         },
         yAxis: {
             min: 0,
@@ -73,7 +77,26 @@ function setupChart() {
         },
         plotOptions: {
             series: {
-                stacking: 'normal'
+                stacking: 'percent',
+                dataLabels: {
+                   enabled: true,
+                   align: 'right',
+                   color: '#FFFFFF',
+                   x: -10,
+                   formatter: function() {
+                    if (this.percentage < 15) {
+                      return "";
+                    }
+                    return Math.round(this.percentage)+"%";
+                  },
+                  style: {
+                    color: 'white',
+                    
+                    textShadow: 'none'
+                  }
+               },
+               pointPadding: 0.1,
+               groupPadding: 0
             }
         },
         series: [{
