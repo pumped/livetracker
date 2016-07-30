@@ -76,14 +76,37 @@ function timeOnSite(data) {
   
   var averageTime = timeSum / clients;
   
+  var hitStats = lastHitStats(data);
+  
   var timeOnSite = {
     "average": averageTime,
     "total": timeSum,
     "longest": longest,
-    "shortest": shortest    
+    "shortest": shortest,
+    "hitStats": hitStats  
   }
   
   return timeOnSite;
+}
+
+function lastHitStats(data) {
+  var binCount = 10;
+  var binPeriod = 10*1000;
+  var maxTime = binCount * binPeriod;
+  var bins = Array.apply(null, Array(binCount)).map(Number.prototype.valueOf,0);;
+  
+  var d = new Date;
+  var time = d.getTime();
+  
+  for (var i in data) {
+    var sessionTime = time - data[i].date;
+    var binNum = parseInt(sessionTime/binPeriod);
+    if (binNum < binCount) {
+      bins[binNum]+=1;
+    }
+  }
+  
+  return bins;
 }
 
 app.get('/live/report', function (req, res) {

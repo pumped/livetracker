@@ -1,5 +1,5 @@
 #live {
-  width:400px;
+  /*width:400px;*/
   margin:auto;
   /* border:1px solid #f00; */
   text-align:center;
@@ -45,4 +45,32 @@ div#makeup {
 
 #time {
   font-size:0.8em;
+}
+
+#requests {
+  /* height: 100px; */
+  width:300px;
+  margin:auto;
+}
+
+#requests #reqGraph {
+  height: 250px;
+  margin-top: 50px;
+}
+
+.row {
+  width: 604px;
+  margin:auto;
+  margin-top: 40px;
+}
+
+.row .item {
+  width:300px;
+  display:inline-block;
+}
+
+@media screen and (max-width: 620px) {
+  .row {
+    width:300px;
+  }
 }

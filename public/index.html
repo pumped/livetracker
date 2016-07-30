@@ -12,27 +12,30 @@
 
     </head>
     <body>
-      <div id="live">
-        <div id="liveUsers">0</div><span class="userTitle">Active Users</span>
+      <div class="row">
+        <div id="live" class="item">
+          <div id="liveUsers">0</div><span class="userTitle">Active Users</span>
 
-        <div id="makeup"></div>
+          <div id="makeup"></div>
+        </div>
+        
+        <div id="requests" class="item">
+          <div id="reqGraph"></div>
+        </div>
       </div>
-      
-      <div id="time">
-        <div id="longest">
-          <h3>Longest Time On Site</h3>
-          <div class="ip"></div>
-          <div class="time"></div>
+      <div class="row">
+        <div id="time" class="item">
+          <div id="longest">
+            <h3>Longest Time On Site</h3>
+            <div class="ip"></div>
+            <div class="time"></div>
+          </div>
+          <div id="mean">
+            <h3>Average Time On Site</h3>
+            <div class="time"></div>
+          </div>
         </div>
-        <div id="shortest">
-          <h3>Shortest Time On Site</h3>
-          <div class="ip"></div>
-          <div class="time"></div>
-        </div>
-        <div id="mean">
-          <h3>Average Time On Site</h3>
-          <div class="time"></div>
-        </div>
+        <div class="item"></div>
       </div>
 
 
