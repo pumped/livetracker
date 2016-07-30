@@ -1,15 +1,14 @@
 $(document).ready(function(){
   
-  setInterval(function(){
-    getData();
-  },2000);
   
   setupChart();
+  getData();
 });
 
 function getData() {
   $.getJSON('/live/data',function(data){
     updateData(data);
+    setTimeout(getData,2000);
   })
 }
 

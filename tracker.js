@@ -1,3 +1,5 @@
+var farmhash = require('farmhash');
+
 function Tracker() {
   this.live = {};
   
@@ -13,28 +15,34 @@ Tracker.prototype.getData = function () {
 
 Tracker.prototype.addRequest = function (info, req) {
   var ip = info.ip;
-  
-  var d = new Date();
-  var time = d.getTime();
-  
   var ua = req.headers['user-agent'];
-  var ual = ua.toLowerCase();
-  var type = 2;
+  var cid = farmhash.fingerprint32(ip+ua);
   
-  if (ual.includes("mobile")) {
-    type = 1;
-  } 
-  
-  if (ual.includes("tablet")) {
-    type = 3;
+  if (!this.live[cid]) {
+      
+    var d = new Date();
+    var time = d.getTime();
+    
+
+    var ual = ua.toLowerCase();
+    var type = 2;  
+    if (ual.includes("mobile")) {
+      type = 1;
+    } else if (ual.includes("tablet")) {
+      type = 3;
+    }
+    
+    var request = {
+      "ip":ip,
+      "date":time,
+      "type":type,
+      "count":0
+    }
+    
+    this.live[cid] = request;
+  } else {
+    this.live[cid].count++;
   }
-  
-  var request = {
-    "date":time,
-    "type":type
-  }
-  
-  this.live[ip] = request;
 };
 
 Tracker.prototype.clean = function() {
@@ -45,7 +53,7 @@ Tracker.prototype.clean = function() {
   removeDate -= 60*1000;
   for (var i in this.live) {
     if (this.live[i].date < removeDate) {
-      console.log("removed " + i);
+      //console.log("removed " + i);
       delete this.live[i];
     }
   }

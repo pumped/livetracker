@@ -21,6 +21,8 @@ app.get('/live/data', function (req, res) {
   var mobile = 0;
   var tablet = 0;
   
+  var topClients = {};
+  
   for (var i in data) {
     if (data[i].type == 1) {
       mobile++;
@@ -29,6 +31,7 @@ app.get('/live/data', function (req, res) {
     } else if (data[i].type == 3) {
       tablet++;
     }
+    
   }
   
   var resp = {
@@ -56,12 +59,10 @@ app.get('/live/report', function (req, res) {
     }    
   }
   
-  console.log(ip);
-  
   tracker.addRequest({"ip":ip}, req);
   var rid = Math.random();
   
-  res.status(200).send(rid);  
+  res.status(200).send(rid.toString());  
 });
 
 
