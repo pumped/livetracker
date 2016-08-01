@@ -8,7 +8,7 @@ $(document).ready(function(){
 });
 
 function getData() {
-  $.getJSON('https://pokefind.ddns.net/live/data',function(data){
+  $.getJSON('/live/data',function(data){
     updateData(data);
     setTimeout(getData,2000);
   })
