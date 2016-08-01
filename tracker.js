@@ -100,7 +100,9 @@ Tracker.prototype.writeLocations = function (id,location) {
   if (!location[0]) {
     return;
   }
-  var locString = id + "," + location[0]  + "," + location[1]+"\n";
+  var d = new Date();
+  var time = d.getTime();
+  var locString = id + "," + time + "," + location[0]  + "," + location[1]+"\n";
   fs.appendFile("locations.json", locString, function (err) {
   });
 };
