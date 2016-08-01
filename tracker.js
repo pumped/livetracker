@@ -1,7 +1,9 @@
 var farmhash = require('farmhash');
+var fs = require('fs');
 
 function Tracker() {
   this.live = {};
+  this.locations = {};
   this.liveFile = "live.json";
   
   var that = this;
@@ -35,7 +37,20 @@ Tracker.prototype.addRequest = function (info, req) {
   
   //attempt to get Location
   var location = this.detectLocation(req);
-    
+  
+  if (this.locations[cid]) {    
+    this.locations[cid].locations.push(location);
+    this.locations[cid].time = time;
+  } else {
+    this.locations[cid] = {
+      "locations":[],
+      "time":time
+    };
+  }
+  
+  this.writeLocations(cid,location);
+  
+  
   
   if (!this.live[cid]) {
     var ual = ua.toLowerCase();
@@ -46,13 +61,19 @@ Tracker.prototype.addRequest = function (info, req) {
       type = 3;
     }
     
+    if (this.locations[cid]) {
+      var loc = this.locations[cid].locations;
+    } else {
+      var loc = [location];
+    }
+    
     var request = {
       "ip":ip,
       "date":time,
       "latest":time,
       "type":type,
       "count":0,
-      "locations":[location]
+      "locations":loc
     }
     
     this.live[cid] = request;
@@ -72,6 +93,12 @@ Tracker.prototype.addRequest = function (info, req) {
         } 
     }
   }
+};
+
+Tracker.prototype.writeLocations = function (id,location) {
+  var locString = id + "," + location[0]  + "," + location[1]+"\n";
+  fs.appendFile("locations.json", locString, function (err) {
+  });
 };
 
 Tracker.prototype.detectLocation = function(req) {
@@ -94,8 +121,11 @@ Tracker.prototype.clean = function() {
   //if older than 10 minutes, delete
   var d = new Date();
   var removeDate = d.getTime();
+  var locationDate = d.getTime();
   //removeDate -= 10*60*1000;
   removeDate -= 45*1000;
+  locationDate -= 5*60*1000;
+  
   for (var i in this.live) {
     if (this.live[i].latest < removeDate) {
       //console.log("removed " + i);
@@ -103,7 +133,12 @@ Tracker.prototype.clean = function() {
     }
   }
   
-  var fs = require('fs');
+  for (var i in this.locations) {
+    if (this.locations[i].time < locationDate) {
+      delete this.locations[i];
+    }
+  }
+  
   var str = JSON.stringify(this.live);
   fs.writeFile(this.liveFile, str, function(err) {
       if(err) {
