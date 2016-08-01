@@ -8,15 +8,13 @@ $(document).ready(function(){
 });
 
 function getData() {
-  $.getJSON('/live/data',function(data){
+  $.getJSON('https://pokefind.ddns.net/live/data',function(data){
     updateData(data);
     setTimeout(getData,2000);
   })
 }
 
 function updateData(data) {
-  console.log(data)
-  
   updateMarkers(data);
   
   $("#liveUsers").html(data.clients);
@@ -228,7 +226,15 @@ function setupRequestGraph() {
 }
 
 function updateMarkers(data) {
+  var delIDS = {};
+  for (var i in markers) {
+    delIDS[i] = true;
+  }
+  
   for (var i in data.data) {
+    //remove from delete queue
+    delete delIDS[i];
+    
     var client = data.data[i];
     var latestLocation = false;
     var lineList = [];
@@ -259,6 +265,13 @@ function updateMarkers(data) {
     }
     
   }
+  
+  for (var i in delIDS) {
+    locationLayer.removeLayer(markers[i].track);
+    trackLayer.removeLayer(markers[i].marker);
+    delete markers[i];
+  }
+  
 }
 
 var map;
