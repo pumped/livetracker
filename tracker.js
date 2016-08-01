@@ -59,8 +59,8 @@ Tracker.prototype.addRequest = function (info, req) {
   } else {
     this.live[cid].count++;
     this.live[cid].latest = time;
-    if (!this.live.locations) {
-      this.live.locations = [];
+    if (!this.live[cid].locations) {
+      this.live[cid].locations = [];
     }
     this.live[cid].locations.push(location);
     
