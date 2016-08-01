@@ -59,6 +59,9 @@ Tracker.prototype.addRequest = function (info, req) {
   } else {
     this.live[cid].count++;
     this.live[cid].latest = time;
+    if (!this.live.locations) {
+      this.live.locations = [];
+    }
     this.live[cid].locations.push(location);
     
     //pop first location off if it's too long
