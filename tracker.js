@@ -63,6 +63,7 @@ Tracker.prototype.addRequest = function (info, req) {
     
     if (this.locations[cid]) {
       var loc = this.locations[cid].locations;
+      console.log("attaching old locations");
     } else {
       var loc = [location];
     }
@@ -96,6 +97,9 @@ Tracker.prototype.addRequest = function (info, req) {
 };
 
 Tracker.prototype.writeLocations = function (id,location) {
+  if (!location[0]) {
+    return;
+  }
   var locString = id + "," + location[0]  + "," + location[1]+"\n";
   fs.appendFile("locations.json", locString, function (err) {
   });
@@ -124,7 +128,7 @@ Tracker.prototype.clean = function() {
   var locationDate = d.getTime();
   //removeDate -= 10*60*1000;
   removeDate -= 45*1000;
-  locationDate -= 5*60*1000;
+  locationDate -= 15*60*1000;
   
   for (var i in this.live) {
     if (this.live[i].latest < removeDate) {
