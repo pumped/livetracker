@@ -271,7 +271,8 @@ var userMarker = {
   color:"#ffffff",
   weight:2,
   fillOpacity:1,
-  opacity:0.6
+  opacity:0.6,
+  radius:5
 };
 
 function setupMap() {
@@ -312,6 +313,11 @@ function setupMap() {
    	"Map": Hydda_Full, 
   	"Satelite": Esri_WorldImagery
   };
+  
+  var locationLayers = {
+    "markers": locationLayer,
+    "tracks": trackLayer
+  }
     
-  L.control.layers(baseMaps, locationLayer).addTo(map);
+  L.control.layers(baseMaps, locationLayers).addTo(map);
 }
