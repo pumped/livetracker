@@ -1,3 +1,11 @@
+#map {
+  height:200px;
+}
+
+.leaflet-control-attribution {
+  display:none;
+}
+
 #live {
   /*width:400px;*/
   margin:auto;

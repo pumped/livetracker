@@ -4,6 +4,7 @@ $(document).ready(function(){
   setupChart();
   setupRequestGraph();
   getData();
+  setupMap();
 });
 
 function getData() {
@@ -15,6 +16,9 @@ function getData() {
 
 function updateData(data) {
   console.log(data)
+  
+  updateMarkers(data);
+  
   $("#liveUsers").html(data.clients);
   userChart.series[0].setData([data.mobile]);
   userChart.series[1].setData([data.computer]);
@@ -221,4 +225,93 @@ function setupRequestGraph() {
             color: "#3c87ff"
         }]
     });
+}
+
+function updateMarkers(data) {
+  for (var i in data.data) {
+    var client = data.data[i];
+    var latestLocation = false;
+    var lineList = [];
+    for (var j in client.locations) {
+      if (client.locations[j] != false) {
+        latestLocation = client.locations[j].reverse();
+        lineList.push(latestLocation);
+      }
+    }
+    
+    if (latestLocation) {
+      if (markers[i]) {
+        markers[i].marker.setLatLng(latestLocation);
+        markers[i].track.setLatLngs(lineList);
+      } else {        
+        markers[i] = {};
+        
+        markers[i].track = new L.Polyline(lineList, {
+          color: 'red',
+          weight: 1,
+          opacity: 0.5,
+          smoothFactor: 1
+        });
+        markers[i].track.addTo(trackLayer);
+        
+        markers[i].marker = L.circleMarker(latestLocation,userMarker).addTo(locationLayer);
+      }        
+    }
+    
+  }
+}
+
+var map;
+var locationLayer;
+var trackLayer;
+var markers = {};
+
+var userMarker = {
+  fillColor:"rgb(36, 196, 237)",
+  color:"#ffffff",
+  weight:2,
+  fillOpacity:1,
+  opacity:0.6
+};
+
+function setupMap() {
+  map = L.map('map').setView([-19.245171, 146.810350], 14);
+
+  trackLayer = L.layerGroup();
+  trackLayer.addTo(map); 
+  
+  locationLayer = L.layerGroup();
+  locationLayer.addTo(map);
+  
+  trackLayer.setZIndex(99);
+  locationLayer.setZIndex(0);
+
+  
+  
+  
+  var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+	   attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+  });
+
+  var Hydda_Full = L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
+  	attribution: 'Tiles courtesy of <a href="http://openstreetmap.se/" target="_blank">OpenStreetMap Sweden</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+
+  var positron = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+  	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+  });
+
+  var Thunderforest_Transport = L.tileLayer('http://{s}.tile.thunderforest.com/transport/{z}/{x}/{y}.png', {
+  	attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  	maxZoom: 19
+  });
+
+  var baseMaps = {
+  	"Default": Thunderforest_Transport,
+  	//"Pokemon": pokeMap,
+   	"Map": Hydda_Full, 
+  	"Satelite": Esri_WorldImagery
+  };
+    
+  L.control.layers(baseMaps, locationLayer).addTo(map);
 }

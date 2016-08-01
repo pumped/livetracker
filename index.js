@@ -40,7 +40,8 @@ app.get('/live/data', function (req, res) {
     "computer":computer,
     "mobile":mobile,
     "tablet":0,
-    "timeOnSite":tos
+    "timeOnSite":tos,
+    "data":data
   }  
   
   var response = JSON.stringify(resp);

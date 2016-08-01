@@ -28,9 +28,14 @@ Tracker.prototype.getData = function () {
 Tracker.prototype.addRequest = function (info, req) {
   var ip = info.ip;
   var ua = req.headers['user-agent'];
+  if (!ua) { ua = "none"; }
   var cid = farmhash.fingerprint32(ip+ua);
   var d = new Date();
   var time = d.getTime();
+  
+  //attempt to get Location
+  var location = this.detectLocation(req);
+    
   
   if (!this.live[cid]) {
     var ual = ua.toLowerCase();
@@ -46,13 +51,39 @@ Tracker.prototype.addRequest = function (info, req) {
       "date":time,
       "latest":time,
       "type":type,
-      "count":0
+      "count":0,
+      "locations":[location]
     }
     
     this.live[cid] = request;
   } else {
     this.live[cid].count++;
     this.live[cid].latest = time;
+    this.live[cid].locations.push(location);
+    
+    //pop first location off if it's too long
+    if (this.live[cid].hasOwnProperty("locations")) {
+      var len = this.live[cid].locations.length
+        for (var i=len; i > 30; i--) {
+          this.live[cid].locations.shift();     
+        } 
+    }
+  }
+};
+
+Tracker.prototype.detectLocation = function(req) {
+  if (!req || !req.hasOwnProperty("params")) {
+    console.log("not post");
+    return false;
+  }
+
+  var x = Number(req.query.x);
+  var y = Number(req.query.y);
+  
+  if (x && y) {
+    return [x,y];
+  } else {
+    return false;
   }
 };
 
