@@ -245,6 +245,8 @@ function updateMarkers(data) {
       }
     }
     
+    console.log(data);
+    
     if (latestLocation) {
       if (markers[i]) {
         markers[i].marker.setLatLng(latestLocation);
@@ -252,23 +254,24 @@ function updateMarkers(data) {
       } else {        
         markers[i] = {};
         
-        markers[i].track = new L.Polyline(lineList, {
-          color: 'red',
-          weight: 1,
-          opacity: 0.5,
-          smoothFactor: 1
-        });
+        markers[i].track = new L.Polyline(lineList, trackStyle);
         markers[i].track.addTo(trackLayer);
         
-        markers[i].marker = L.circleMarker(latestLocation,userMarker).addTo(locationLayer);
+        var popupText = "<h3>"+client.ip+"</h3>" +
+                        "Session: <span class='agoTime' data-time='"+client.date+"'>"+"</span>";
+        var markerColor = (client.type == 2 ? "#3c87ff":"#50b432");
+        
+        var markerStyle = $.extend({},userMarker,{id:i, fillColor:markerColor});
+        markers[i].marker = L.circleMarker(latestLocation,markerStyle).addTo(locationLayer)
+                              .bindPopup(popupText);
       }        
     }
     
   }
   
   for (var i in delIDS) {
-    locationLayer.removeLayer(markers[i].track);
-    trackLayer.removeLayer(markers[i].marker);
+    locationLayer.removeLayer(markers[i].marker);
+    trackLayer.removeLayer(markers[i].track);
     delete markers[i];
   }
   
@@ -287,6 +290,12 @@ var userMarker = {
   opacity:0.6,
   radius:5
 };
+var trackStyle = {
+  color: 'red',
+  weight: 1,
+  opacity: 0.5,
+  smoothFactor: 1
+};
 
 function setupMap() {
   map = L.map('map').setView([-19.245171, 146.810350], 14);
@@ -299,9 +308,32 @@ function setupMap() {
   
   trackLayer.setZIndex(99);
   locationLayer.setZIndex(0);
+  
+  //highlight track on popup
+  map.on('popupopen', function(e) {
+    updateMarkerTime();
+    var marker = e.popup._source;
+    if (locationLayer.hasLayer(marker)) {
+      if (marker.options.id) {
+        var track = markers[marker.options.id].track;
+        
+        var style = {
+          color: '#000',
+          weight: 3,
+          opacity: 0.5,
+          smoothFactor: 1
+        };
 
-  
-  
+        
+        track.setStyle(style);
+        marker._popup.on('close',function(){
+          track.setStyle(trackStyle);
+        })
+        
+      }
+    }
+  });
+
   
   var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
 	   attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
@@ -334,3 +366,53 @@ function setupMap() {
     
   L.control.layers(baseMaps, locationLayers).addTo(map);
 }
+
+setInterval(updateMarkerTime,1000);
+
+  function updateMarkerTime() {
+  	$(".agoTime").each(function(){
+  		//var disp = $(".disTime").data('time');
+  		var disp = $(this).data('time');
+  		if (disp) {
+  			var timeString = timeSince(disp);
+  			$(this).html(timeString);
+  		}
+  		
+  	})
+  }  
+
+  function FormatNumberLength(num, length) {
+      var r = "" + num;
+      while (r.length < length) {
+          r = "0" + r;
+      }
+      return r;
+  }
+
+  function timeSince(date) {
+
+      var seconds = Math.floor((new Date() - date) / 1000);
+
+      var interval = Math.floor(seconds / 31536000);
+
+      if (interval > 1) {
+          return interval + " years";
+      }
+      interval = Math.floor(seconds / 2592000);
+      if (interval > 1) {
+          return interval + " months";
+      }
+      interval = Math.floor(seconds / 86400);
+      if (interval > 1) {
+          return interval + " days";
+      }
+      interval = Math.floor(seconds / 3600);
+      if (interval > 1) {
+          return interval + " hours";
+      }
+      interval = Math.floor(seconds / 60);
+      if (interval > 1) {
+          return interval + " minutes";
+      }
+      return Math.floor(seconds) + " seconds";
+  }
